@@ -1,0 +1,22 @@
+FileKey|order_id,order_date
+FieldName|order_id
+FieldType|Num
+FieldLength|10
+FieldDesc|Order identifier
+FieldDType|D
+FieldName|region
+FieldType|Char
+FieldLength|32
+FieldDesc|Sales region
+FieldDType|D
+FieldName|sales
+FieldType|Num
+FieldLength|10,2
+FieldDesc|Sales amount
+FieldDType|M
+FieldName|order_date
+FieldType|Date
+FieldLength|YYYY-MM-DD
+FieldDesc|Order date
+FieldDType|D
+

@@ -1,0 +1,6 @@
+order_id,region,sales,order_date
+1,North,100.5,2024-01-01
+2,South,200.0,2024-01-02
+3,North,150.0,2024-01-03
+3,North,150.0,2024-01-03
+

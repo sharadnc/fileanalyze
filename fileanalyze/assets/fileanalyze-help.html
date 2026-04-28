@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>File Analyze - Help Tutorial</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f9ff;
+      color: #111827;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #d8e4ff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    h1, h2 {
+      margin: 0 0 8px 0;
+      color: #0b3a7a;
+    }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.15rem; margin-top: 8px; }
+    ul, ol { margin: 8px 0 0 20px; }
+    code {
+      background: #eef4ff;
+      padding: 1px 6px;
+      border-radius: 6px;
+    }
+    .muted { color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <h1>File Analyze - How To Tutorial</h1>
+      <p class="muted">Purpose, features, tabs, and step-by-step usage guide.</p>
+    </div>
+
+    <div class="card">
+      <h2>Purpose</h2>
+      <p>
+        File Analyze helps you load a delimited dataset (CSV/pipe/tab), profile columns, visualize trends,
+        inspect quality risks, and explore records in a powerful interactive Data Grid.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Key Features</h2>
+      <ul>
+        <li>Fast metadata-driven profiling with on-hover quick stats.</li>
+        <li>Chart generation with auto chart recommendations.</li>
+        <li>Quality Scorecard and Top Findings insight summary.</li>
+        <li>Advanced Data Grid with dimension/measure filters and column hide/unhide drawer.</li>
+        <li>Copy grid to clipboard and export filtered CSV.</li>
+        <li>Large-data safeguards and server-side grid mode for very large results.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Tabs Overview</h2>
+      <ul>
+        <li><b>Visual Analysis Tab</b>: choose fields, build chart, inspect Field Info and Quality Scorecard.</li>
+        <li><b>Data Grid Tab</b>: apply multi-row filters, sort/hide columns, review row-level records.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Step 1 - Load Data</h2>
+      <ol>
+        <li>Enter full file path in <code>Input File Path</code>.</li>
+        <li>Select delimiter: comma, pipe, or tab.</li>
+        <li>Click <code>Load + Profile</code>.</li>
+      </ol>
+      <p class="muted">
+        Tip: metadata sidecar is expected (for example, <code>yourfile.csv_Meta</code>) to drive field types and labels.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Step 2 - Generate Analysis</h2>
+      <ol>
+        <li>Go to Visual Analysis tab.</li>
+        <li>Select Dimension, Measure, optional Color Dimension.</li>
+        <li>Choose Chart Type (or let app auto-recommend).</li>
+        <li>Click <code>Generate Chart</code>.</li>
+      </ol>
+      <p>
+        Below the chart you will see:
+      </p>
+      <ul>
+        <li><b>Field Info</b> (selected field metrics/top values)</li>
+        <li><b>Quality Scorecard</b> (null %, invalid parse %, duplicate PK %, warnings)</li>
+        <li><b>Top Findings</b> summary insights</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Step 3 - Filter Data in Data Grid</h2>
+      <ol>
+        <li>Go to Data Grid tab.</li>
+        <li>Dimension side (left): choose field + value set.</li>
+        <li>Measure side (right): choose field + range set.</li>
+        <li>Use <code>Add More Dimension Filters</code> / <code>Add More Measure Filters</code> for extra rules.</li>
+        <li>Click <code>Apply Filters</code> to refresh grid.</li>
+      </ol>
+      <ul>
+        <li>Field selectors are cascading: a selected field is removed from other rows.</li>
+        <li>You can sort column names with <code>Sort the Column Names</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Column Controls and Copy/Export</h2>
+      <ul>
+        <li>Click the hamburger icon (<code>☰</code>) to open column hide/unhide drawer.</li>
+        <li>Use drawer search + Select All / Deselect All.</li>
+        <li>Click clipboard icon (<code>📋</code>) to copy visible grid view to clipboard (Excel-friendly).</li>
+        <li>Click <code>Export Filtered CSV</code> to download full filtered result.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Large File Behavior</h2>
+      <ul>
+        <li>For very large filtered outputs, the app activates a safety guard and shows a warning banner.</li>
+        <li>Grid may switch to server-side mode so only paged blocks are loaded in browser.</li>
+        <li>Use CSV export for complete full-data output when preview is sampled.</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
