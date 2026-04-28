@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import threading
+import time
 import uuid
 
 from dash import ALL, MATCH, Dash, Input, Output, State, ctx, dcc, html, no_update
@@ -1105,6 +1106,102 @@ def _render_quality_summary_card(quality_payload: dict[str, object]) -> html.Div
     )
 
 
+_RETENTION_SWEEPER_LOCK = threading.Lock()
+_RETENTION_SWEEPER_STARTED = False
+
+
+def _sweep_expired_output_artifacts(config: AppConfig) -> None:
+    """
+    Purpose:
+        Delete aged run/session artifacts from `output_root` silently on a schedule.
+
+    Internal Logic:
+        1. Removes run folders older than `run_ttl_hours` based on latest mtime.
+        2. Removes empty or stale session folders older than `session_ttl_hours`.
+        3. Ignores per-path failures so cleanup never disrupts app usage.
+
+    Example invocation:
+        _sweep_expired_output_artifacts(config)
+    """
+
+    now = time.time()
+    run_ttl_seconds = max(1, int(config.run_ttl_hours)) * 3600
+    session_ttl_seconds = max(1, int(config.session_ttl_hours)) * 3600
+    output_root = config.output_root
+    if not output_root.exists():
+        return
+
+    for session_dir in output_root.iterdir():
+        if not session_dir.is_dir():
+            continue
+        for run_dir in session_dir.iterdir():
+            if not run_dir.is_dir():
+                continue
+            try:
+                latest_mtime = max((item.stat().st_mtime for item in run_dir.rglob("*")), default=run_dir.stat().st_mtime)
+                if (now - latest_mtime) > run_ttl_seconds:
+                    for item in sorted(run_dir.rglob("*"), reverse=True):
+                        try:
+                            if item.is_file():
+                                item.unlink(missing_ok=True)
+                            elif item.is_dir():
+                                item.rmdir()
+                        except Exception:  # noqa: BLE001
+                            pass
+                    run_dir.rmdir()
+            except Exception:  # noqa: BLE001
+                pass
+
+        try:
+            latest_session_mtime = max(
+                (item.stat().st_mtime for item in session_dir.rglob("*")),
+                default=session_dir.stat().st_mtime,
+            )
+            if (now - latest_session_mtime) > session_ttl_seconds:
+                for item in sorted(session_dir.rglob("*"), reverse=True):
+                    try:
+                        if item.is_file():
+                            item.unlink(missing_ok=True)
+                        elif item.is_dir():
+                            item.rmdir()
+                    except Exception:  # noqa: BLE001
+                        pass
+                session_dir.rmdir()
+        except Exception:  # noqa: BLE001
+            pass
+
+
+def _start_output_retention_sweeper(config: AppConfig) -> None:
+    """
+    Purpose:
+        Start a singleton background sweeper that frequently cleans output artifacts.
+
+    Internal Logic:
+        1. Uses a process-wide lock/flag so sweeper starts only once.
+        2. Performs immediate cleanup once at startup.
+        3. Repeats cleanup every `retention_sweep_minutes` in daemon thread.
+
+    Example invocation:
+        _start_output_retention_sweeper(config)
+    """
+
+    global _RETENTION_SWEEPER_STARTED  # noqa: PLW0603
+    with _RETENTION_SWEEPER_LOCK:
+        if _RETENTION_SWEEPER_STARTED:
+            return
+        _RETENTION_SWEEPER_STARTED = True
+
+    def _worker() -> None:
+        interval = max(1, int(config.retention_sweep_minutes)) * 60
+        _sweep_expired_output_artifacts(config)
+        while True:
+            time.sleep(interval)
+            _sweep_expired_output_artifacts(config)
+
+    thread = threading.Thread(target=_worker, daemon=True, name="fileanalyze-output-retention")
+    thread.start()
+
+
 def create_app() -> Dash:
     """
     Purpose:
@@ -1128,6 +1225,7 @@ def create_app() -> Dash:
     app.title = "File Analyze"
     load_figure_template("flatly")
     app.layout = build_layout()
+    _start_output_retention_sweeper(config)
     _register_callbacks(app, config)
     return app
 
