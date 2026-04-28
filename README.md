@@ -34,7 +34,7 @@ Interactive analytics dashboard for delimited text datasets (CSV, pipe, tab) wit
 ## Setup
 
 ```powershell
-cd "g:\My Drive\AI_Projects\Web_NextGen\NextGenKnow"
+cd "<Your Directory>"
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
